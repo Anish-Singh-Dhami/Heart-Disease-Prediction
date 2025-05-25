@@ -6,7 +6,7 @@ type LoadingButtonProp = {
 };
 const LoadingButton: React.FC<LoadingButtonProp> = ({ loadingText }) => {
   return (
-    <Button disabled className="min-w-full">
+    <Button disabled className="">
       <Loader2 className="mr-2 animate-spin" />
       {loadingText}
     </Button>

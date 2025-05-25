@@ -8,7 +8,7 @@ import { SignupPage } from "./pages/SignupPage";
 import AllDoctorsPage from "./pages/AllDoctorsPage";
 import ChatPage from "./pages/ChatPage";
 import { PredictionResultPage } from "./pages/PredictionResultPage";
-import { AccountPage } from "./forms/AccountPage";
+import { AccountPage } from "./pages/AccountPage";
 
 function App() {
   return (

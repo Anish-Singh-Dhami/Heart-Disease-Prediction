@@ -1,10 +1,20 @@
 // pages/ChatPage.tsx
 import { ChatSidebar } from "@/components/ChatSidebar";
 import { ChatWindow } from "@/components/ChatWindow";
+import socket from "@/lib/socket";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 const ChatPage = () => {
   const { conversationId } = useParams();
+  useEffect(() => {
+    if (conversationId) {
+      socket.emit("join_conversation", conversationId);
+    }
+    return () => {
+      socket.off("join_conversation");
+    };
+  }, [conversationId]);
   return (
     <div className="flex h-screen">
       <ChatSidebar />

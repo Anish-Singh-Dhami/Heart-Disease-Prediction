@@ -1,36 +1,8 @@
-import {
-  Role,
-  type Conversation,
-  type Doctor,
-  type Message,
-  type Patient,
-} from "@/types";
+import { type Conversation, type Message } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useAuth } from "./AuthApi";
-
-// export type ChatPartner = {
-//   _id: string;
-//   name: string;
-//   profilePic?: string;
-//   unreadMessage: number;
-// };
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// const useChatPartners = () => {
-//   const getAllChatPatner = async (): Promise<ChatPartner[]> => {
-//     const response = await fetch(`${API_BASE_URL}/api/chats/users`);
-//     if (!response.ok) {
-//       throw new Error("Failed to fetch chat patners");
-//     }
-//     return response.json();
-//   };
-
-//   return useQuery({
-//     queryKey: ["chat-patners"],
-//     queryFn: getAllChatPatner,
-//   });
-// };
+const API_CONVERSATION_URL = import.meta.env.VITE_API_CONVERSATION_URL;
 
 const useGetConversationId = () => {
   type ConversationRequestType = {
@@ -41,7 +13,7 @@ const useGetConversationId = () => {
     patientId,
     doctorId,
   }: ConversationRequestType): Promise<Conversation> => {
-    const res = await fetch(`${API_BASE_URL}/api/conversation/start`, {
+    const res = await fetch(`${API_BASE_URL}/${API_CONVERSATION_URL}/start`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -62,7 +34,7 @@ const useGetConversationId = () => {
 
 const useGetConversationUser = () => {
   const getConverationUserReq = async (): Promise<Conversation[]> => {
-    const res = await fetch(`${API_BASE_URL}/api/conversation`, {
+    const res = await fetch(`${API_BASE_URL}/${API_CONVERSATION_URL}`, {
       method: "GET",
       credentials: "include",
     });
@@ -87,7 +59,11 @@ type UseGetChatsProp = {
 const useGetChats = ({ conversationId }: UseGetChatsProp) => {
   const getChatReq = async (): Promise<Message[]> => {
     const res = await fetch(
-      `${API_BASE_URL}/api/converation/:${conversationId}/message`
+      `${API_BASE_URL}/${API_CONVERSATION_URL}/${conversationId}/message`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
     );
     if (!res.ok) {
       const errRes = await res.json();
@@ -101,4 +77,46 @@ const useGetChats = ({ conversationId }: UseGetChatsProp) => {
   });
 };
 
-export { useGetConversationUser, useGetConversationId, useGetChats };
+type Payload = {
+  message: string;
+  sendBy: string;
+};
+
+type PostMessageType = {
+  conversationId: string;
+  payload: Payload;
+};
+
+const usePostMessage = () => {
+  const postChatMessage = async ({
+    conversationId,
+    payload,
+  }: PostMessageType): Promise<Message> => {
+    const res = await fetch(
+      `${API_BASE_URL}/${API_CONVERSATION_URL}/${conversationId}/message`,
+      {
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Error while sending message");
+    }
+    return res.json();
+  };
+
+  return useMutation({
+    mutationFn: postChatMessage,
+  });
+};
+
+export {
+  useGetConversationUser,
+  useGetConversationId,
+  useGetChats,
+  usePostMessage,
+};

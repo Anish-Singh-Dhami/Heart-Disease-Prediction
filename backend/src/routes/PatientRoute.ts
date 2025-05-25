@@ -1,17 +1,13 @@
 import express from "express";
 import PatientController from "../controllers/PatientController";
-import { ProtectRouteMiddleWare } from "../middleware/ProtectRouteMiddleware";
+import { uploadMemory } from "../lib/multer";
 
 const router = express.Router();
 
-router.get(
-  "/",
-  ProtectRouteMiddleWare,
-  PatientController.getCurrentLoggedInPatient
-);
-router.post(
+router.get("/", PatientController.getCurrentLoggedInPatient);
+router.put(
   "/update",
-  ProtectRouteMiddleWare,
+  uploadMemory.single("profilePic"),
   PatientController.updatePatientDetails
 );
 

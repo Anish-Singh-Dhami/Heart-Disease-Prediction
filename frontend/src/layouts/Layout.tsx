@@ -6,7 +6,7 @@ type LayoutProp = {
 };
 const Layout = ({ children }: LayoutProp) => {
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-gray-700">
+    <div className="flex flex-col min-h-screen bg-gray-800">
       <Header />
       {children}
     </div>

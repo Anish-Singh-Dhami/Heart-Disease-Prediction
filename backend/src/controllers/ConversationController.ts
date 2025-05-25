@@ -4,6 +4,7 @@ import { Role, User } from "../models/user.model";
 import { Patient } from "../models/patient.model";
 import { Doctor } from "../models/doctor.model";
 import { IMessage, Message } from "../models/message.model";
+import { send } from "process";
 
 // Get all conversations for logged-in user
 const getUserConversations = async (req: Request, res: Response) => {
@@ -72,6 +73,9 @@ const startConversation = async (req: Request, res: Response) => {
         patient: patientId,
         doctor: doctorId,
       });
+
+      const io = req.app.get("socketio");
+      io.emit("new_conversation", conversation);
     }
     res.status(200).json(conversation);
   } catch (error) {
@@ -86,11 +90,12 @@ const CONVERSATION_ID = process.env.CONVERSATION_ID || "conversationId";
 // Get messages in a conversation
 const getConversationMessages = async (req: Request, res: Response) => {
   try {
+    console.log("Triggered getConversationMessages");
     const conversationId = req.params[CONVERSATION_ID];
-    console.log("getConversationMessages: conversationId: ", conversationId);
+    console.log("conversationId: ", conversationId);
     const messages: IMessage[] = await Message.find({
       conversation: conversationId,
-    }).populate("conversation");
+    });
     res.status(200).json(messages);
   } catch (error) {
     console.log("Error in getConversationMessages route :", error);
@@ -101,7 +106,26 @@ const getConversationMessages = async (req: Request, res: Response) => {
 };
 
 // Send a message
-const sendMessage = async (req: Request, res: Response) => {};
+const sendMessage = async (req: Request, res: Response) => {
+  try {
+    console.log("Req Body: ", req.body);
+    const { message, sendBy } = req.body;
+    const conversationId = req.params[CONVERSATION_ID];
+
+    const messageObj = await Message.create({
+      conversation: conversationId,
+      content: message,
+      isSendByDoctor: sendBy === Role.DOCTOR,
+    });
+
+    const io = req.app.get("socketio");
+    io.to(conversationId).emit("receive_message", messageObj);
+
+    res.status(201).json(messageObj);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 export default {
   getUserConversations,

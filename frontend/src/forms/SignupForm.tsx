@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@/components/LoadingButton";
-import { useAuth, useSignup } from "@/api/AuthApi";
+import { useSignup } from "@/api/AuthApi";
 import { Role } from "@/types";
 import { toast } from "sonner";
 

@@ -29,10 +29,9 @@ export type Patient = {
 
 export type Doctor = {
   _id: string;
-  yearsOfExperience: number;
+  yearOfExperience: number;
   expertise: string;
   qualification: string;
-  location?: string;
   user: User;
 };
 

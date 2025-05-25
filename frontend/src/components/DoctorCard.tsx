@@ -45,10 +45,12 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
         <p className="text-sm text-gray-300">{doctor.qualification}</p>
         <p className="text-sm text-gray-400">Expertise: {doctor.expertise}</p>
         <p className="text-sm text-gray-400">
-          Experience: {doctor.yearsOfExperience} years
+          Experience: {doctor.yearOfExperience} years
         </p>
-        {doctor.location && (
-          <p className="text-sm text-gray-500">📍 {doctor.location}</p>
+        {doctor.user.country && (
+          <p className="text-sm text-gray-500">
+            📍 {doctor.user.country}, {doctor.user.state}
+          </p>
         )}
         <Button onClick={() => handleChat(doctor)} className="mt-2 w-full">
           Chat with Doctor

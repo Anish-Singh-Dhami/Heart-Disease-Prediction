@@ -118,7 +118,6 @@ const UserDetailForm = ({
         queryClient.invalidateQueries({
           queryKey: ["getPatientApi"],
         });
-        // form.reset(data);
       },
     });
   };

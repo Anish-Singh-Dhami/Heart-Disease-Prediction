@@ -3,12 +3,15 @@ import { UserDataForm } from "@/forms/UserDataForm";
 import { Navigate } from "react-router-dom";
 
 const PredictionPage = () => {
-  const { predict, isLoading, result } = usePredictionModel();
+  const { predict, isPending, predictionData } = usePredictionModel();
+  console.log("Prediction Data: ", predictionData);
   return (
     <>
-      <UserDataForm predict={predict} isLoading={false} />
-      {!isLoading && (
-        <Navigate to={`/patient/prediction/result?value=${result}`} />
+      <UserDataForm predict={predict} isLoading={isPending} />
+      {predictionData && (
+        <Navigate
+          to={`/patient/prediction/result?value=${predictionData.prediction}`}
+        />
       )}
     </>
   );

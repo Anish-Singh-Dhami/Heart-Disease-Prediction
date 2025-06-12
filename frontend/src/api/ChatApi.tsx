@@ -72,7 +72,7 @@ const useGetChats = ({ conversationId }: UseGetChatsProp) => {
     return res.json();
   };
   return useQuery({
-    queryKey: ["getChatReq"],
+    queryKey: ["getChatReq", conversationId],
     queryFn: getChatReq,
   });
 };

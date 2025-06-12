@@ -14,6 +14,20 @@ type ChatWindowProp = {
 };
 
 export const ChatWindow: React.FC<ChatWindowProp> = ({ conversationId }) => {
+  // const queryClient = useQueryClient();
+  // useEffect(() => {
+  //   console.log("Chat Window rendered!!");
+  //   if (conversationId) {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["getConverationUserReq"],
+  //     });
+  //     if (data) setMessages(data);
+  //     socket.emit("join_conversation", conversationId);
+  //   }
+  //   return () => {
+  //     socket.off("disconnect");
+  //   };
+  // }, [conversationId]);
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
@@ -21,8 +35,14 @@ export const ChatWindow: React.FC<ChatWindowProp> = ({ conversationId }) => {
   const { data, isLoading, error } = useGetChats({ conversationId });
 
   // Join conversation room on mount
+  // const queryClient = useQueryClient();
   // useEffect(() => {
   //   if (conversationId) {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["getConverationUserReq"],
+  //     });
+  //     if(data)
+  //       setMessages(data);
   //     socket.emit("join_conversation", conversationId);
   //   }
   //   return () => {

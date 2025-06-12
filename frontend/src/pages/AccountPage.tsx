@@ -3,6 +3,8 @@ import { useGetDoctor, useUpdateDoctorDetails } from "@/api/DoctorApi";
 import { useGetPatient, useUpdatePatientDetails } from "@/api/PatientApi";
 import { Role } from "@/types";
 import { UserDetailForm } from "@/forms/UserDetailForm";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AccountPage: React.FC = () => {
   const { currentUser } = useAuth();
@@ -13,7 +15,16 @@ const AccountPage: React.FC = () => {
     role === Role.PATIENT
       ? useUpdatePatientDetails()
       : useUpdateDoctorDetails();
-
+      
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ["getDoctorApi"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["getPatientApi"],
+    });
+  }, []);
   if (isLoading) {
     return (
       <div className="flex min-h-screen bg-gray-800 items-center justify-center">

@@ -7,6 +7,7 @@ export const PredictionResultPage = () => {
   const [searchParams] = useSearchParams();
   const result = parseInt(searchParams.get("value") as string);
   const navigate = useNavigate();
+  console.log("res: ", result);
   const hasDisease = result === 1;
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center px-4">

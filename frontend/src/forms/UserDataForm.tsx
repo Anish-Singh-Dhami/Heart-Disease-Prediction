@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -16,43 +16,33 @@ import { LoadingButton } from "@/components/LoadingButton";
 
 // Zod schema
 const formSchema = z.object({
-  age: z.coerce.number({ required_error: "Age is required." }),
-  sex: z.enum(["M", "F"]),
-  chestPainType: z.enum(["ATA", "NAP", "ASY"]),
-  restingBP: z.coerce.number({ required_error: "Resting BP is required." }),
-  cholestrol: z.coerce.number({ required_error: "Cholesterol is required." }),
-  fastingBS: z.coerce.number({ required_error: "Fasting BS is required." }),
-  restingECG: z.coerce.number({ required_error: "Resting ECG is required." }),
-  maxHR: z.coerce.number({ required_error: "Max HR is required." }),
-  exerciseAngina: z.enum(["Y", "N"]),
-  oldPeak: z.coerce.number({ required_error: "Old Peak is required." }),
-  stSlope: z.enum(["Flat", "Up"]),
+  Age: z.coerce.number({ required_error: "Age is required." }),
+  Sex: z.enum(["Male", "Female"]),
+  ChestPainType: z.enum(["ATA", "NAP", "ASY"]),
+  RestingBP: z.coerce.number({ required_error: "Resting BP is required." }),
+  Cholestrol: z.coerce.number({ required_error: "Cholesterol is required." }),
+  FastingBS: z.coerce.number({ required_error: "Fasting BS is required." }),
+  MaxHR: z.coerce.number({ required_error: "Max HR is required." }),
+  ExerciseAngina: z.enum(["Y", "N"]),
+  OldPeak: z.coerce.number({ required_error: "Old Peak is required." }),
+  RestingECG: z.enum(["Normal", "ST", "LVH"]),
+  ST_Slope: z.enum(["Flat", "Up", "Down"]),
 });
 
 type FormType = z.infer<typeof formSchema>;
 
 type Props = {
-  predict: (data: FormData) => void;
+  predict: (data: FormType) => void;
   isLoading: boolean;
 };
 
 export const UserDataForm = ({ predict, isLoading }: Props) => {
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      // sex: undefined,
-      // chestPainType: "ATA",
-      // exerciseAngina: "N",
-      // stSlope: "Up",
-    },
   });
 
-  const onSubmit: SubmitHandler<FormType> = (data) => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value.toString());
-    });
-    predict(formData);
+  const onSubmit = (data: FormType) => {
+    predict(data);
   };
 
   return (
@@ -69,13 +59,12 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
           >
             {/* Input fields */}
             {[
-              ["age", "Age"],
-              ["restingBP", "Resting BP"],
-              ["cholestrol", "Cholesterol"],
-              ["fastingBS", "Fasting BS"],
-              ["restingECG", "Resting ECG"],
-              ["maxHR", "Max Heart Rate"],
-              ["oldPeak", "Old Peak"],
+              ["Age", "Age"],
+              ["RestingBP", "Resting BP"],
+              ["Cholestrol", "Cholesterol"],
+              ["FastingBS", "Fasting BS"],
+              ["MaxHR", "Max Heart Rate"],
+              ["OldPeak", "Old Peak"],
             ].map(([name, label]) => (
               <FormField
                 key={name}
@@ -98,7 +87,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
             {/* Enum fields */}
             <FormField
               control={form.control}
-              name="sex"
+              name="Sex"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xl text-white">Sex</FormLabel>
@@ -108,7 +97,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
                       value={field.value}
                       onValueChange={field.onChange}
                     >
-                      {["M", "F"].map((val) => (
+                      {["Male", "Female"].map((val) => (
                         <div className="flex items-center gap-2" key={val}>
                           <RadioGroupItem
                             className="data-[state=checked]:bg-white data-[state=checked]:border-gray-900"
@@ -116,7 +105,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
                             value={val}
                           />
                           <FormLabel htmlFor={val} className="text-white">
-                            {val === "M" ? "Male" : "Female"}
+                            {val}
                           </FormLabel>
                         </div>
                       ))}
@@ -129,7 +118,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
 
             <FormField
               control={form.control}
-              name="chestPainType"
+              name="ChestPainType"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xl text-white">
@@ -162,7 +151,40 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
 
             <FormField
               control={form.control}
-              name="exerciseAngina"
+              name="RestingECG"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xl text-white">
+                    Resting ECG
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      className="flex gap-4 mt-2"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      {["Normal", "ST", "LVH"].map((val) => (
+                        <div className="flex items-center gap-2" key={val}>
+                          <RadioGroupItem
+                            className="data-[state=checked]:bg-white data-[state=checked]:border-gray-900"
+                            id={val}
+                            value={val}
+                          />
+                          <FormLabel htmlFor={val} className="text-white">
+                            {val}
+                          </FormLabel>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ExerciseAngina"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xl text-white">
@@ -195,7 +217,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
 
             <FormField
               control={form.control}
-              name="stSlope"
+              name="ST_Slope"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xl text-white">ST Slope</FormLabel>
@@ -205,7 +227,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
                       value={field.value}
                       onValueChange={field.onChange}
                     >
-                      {["Up", "Flat"].map((val) => (
+                      {["Up", "Down", "Flat"].map((val) => (
                         <div className="flex items-center gap-2" key={val}>
                           <RadioGroupItem
                             className="data-[state=checked]:bg-white data-[state=checked]:border-gray-900"
@@ -227,7 +249,7 @@ export const UserDataForm = ({ predict, isLoading }: Props) => {
             {/* Submit Button */}
             <div className="flex justify-center pt-4">
               {isLoading ? (
-                <LoadingButton loadingText="Predicting..."/>
+                <LoadingButton loadingText="Predicting..." />
               ) : (
                 <Button
                   type="submit"

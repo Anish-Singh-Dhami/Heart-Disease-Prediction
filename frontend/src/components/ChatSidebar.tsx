@@ -5,28 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/api/AuthApi";
 import { useGetConversationUser } from "@/api/ChatApi";
 import { Role, type Doctor, type Patient } from "@/types";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
-import socket from "@/lib/socket";
 
 export const ChatSidebar = () => {
   const { data, isLoading } = useGetConversationUser();
   const { conversationId } = useParams();
   const { currentUser } = useAuth();
   const role = currentUser?.role;
-
-  const queryClient = useQueryClient();
-  // for new conversation
-  useEffect(() => {
-    socket.on("new_conversation", () => {
-      queryClient.invalidateQueries({
-        queryKey: ["getConverationUserReq"],
-      });
-    });
-    return () => {
-      socket.off("new_conversation");
-    };
-  }, [queryClient]);
 
   return (
     <div className="w-1/4 h-full overflow-y-auto border-r bg-gray-900 text-white p-4">

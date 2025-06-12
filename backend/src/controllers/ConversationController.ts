@@ -4,7 +4,6 @@ import { Role, User } from "../models/user.model";
 import { Patient } from "../models/patient.model";
 import { Doctor } from "../models/doctor.model";
 import { IMessage, Message } from "../models/message.model";
-import { send } from "process";
 
 // Get all conversations for logged-in user
 const getUserConversations = async (req: Request, res: Response) => {
